@@ -1,5 +1,4 @@
 #!/bin/bash
-
 #SBATCH -A sens2022554
 #SBATCH -p core
 #SBATCH -n 16
@@ -7,7 +6,6 @@
 #SBATCH -C mem256GB
 
 set -ueo
-
 source script_includes.sh
 
 echo "Loading modules"
@@ -19,19 +17,17 @@ echo "Loading conda environment"
 source ./load_conda.sh
 echo "Done"
 
-DBNAME="diamond-db"
-
 while test $# -gt 0
 do
         case "$1" in
-                # DB name (optional)
+                # database name
                 --dbname)
                         shift
                         if [ $# -gt 0 ]; then
                                 DBNAME=$1
                         fi
                 ;;
-                # output DB directory (optional)
+                #  database output directory
                 --dbdir)
                         shift
                         if [ $# -gt 0 ]; then
@@ -52,8 +48,8 @@ do
                                 TAXONOMY=$(abs_path $1)
                         fi
                 ;;
-                --accession2taxid)
                 # Accession to taxid map file
+                --accession2taxid)
                         shift
                         if [ $# -gt 0 ]; then
                                 TAXMAP=$(abs_path $1)
@@ -79,7 +75,6 @@ cd $WORK
 echo "Building DIAMOND protein library from samplesheet $SAMPLESHEET"
         LIBRARY="${PWD}/library/protein/protein.library.faa"
         mkdir -p library
-
         cut -d "," -f 4 $SAMPLESHEET \
                 | tail -n +2 \
                 | xargs cat \
@@ -106,22 +101,17 @@ diamond makedb \
         --threads ${CPUS}
 cd ..
 
-if [ -v DBDIR ]; then
-        echo "Writing database to $DBDIR..."
-        if [ -d $DBDIR ]; then
-                echo "Target database directory exists and will be overwritten"
-                rm -r $DBDIR
-        fi
-
-        mkdir -p $(dirname $DBDIR)
-        mv db $DBDIR
-        echo "Done"
-else
-        echo "Finished building database in ${WORK}/db"
+echo "Writing database to $DBDIR..."
+if [ -d $DBDIR ]; then
+        echo "Output database directory exists and will be overwritten"
+        rm -r $DBDIR
 fi
+
+mkdir -p $DBDIR
+mv db/* $DBDIR/
+echo "Done"
 
 echo "Cleaning up temporary files"
         rm -r library
 echo "Done"
-
-echo "DIAMOND database completed"
+echo "Finished"
