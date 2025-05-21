@@ -1,0 +1,2 @@
+id,taxid,fasta_dna,fasta_aa
+some_taxon,1234,/path/to/genomic_sequence.fna,/path/to/protein_sequence.faa

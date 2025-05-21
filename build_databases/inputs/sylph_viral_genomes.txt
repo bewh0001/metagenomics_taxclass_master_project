@@ -1,0 +1,3 @@
+/path/to/first_viral_genome.fna
+/path/to/second_viral_genome.fna
+/path/to/third_viral_genome.fna
