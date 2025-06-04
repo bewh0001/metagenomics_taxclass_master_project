@@ -20,11 +20,11 @@ build_db () {
 	> metabuli_tmp/merged.accession2taxid
 	echo "Done"
 
-	mkdir -p metabuli_db
+	mkdir -p results/metabuli_db
 
 	echo "Building metabuli database"
 	metabuli build \
-		metabuli_db \
+		results/metabuli_db \
 		metabuli_tmp/fastas.txt \
 		metabuli_tmp/merged.accession2taxid \
 		--taxonomy-path $TAXONOMY \

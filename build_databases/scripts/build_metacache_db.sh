@@ -4,20 +4,23 @@ HERE="$(dirname $0)"
 TAXONOMY="${HERE}/../../taxonomy"
 SAMPLESHEET="${HERE}/../inputs/samplesheet.csv"
 
+cd ${HERE}/../../
+mkdir tmp
+
 build_library () {
 	echo "Building metacache genomic library from samplesheet $SAMPLESHEET"
-	LIBRARY="${PWD}/library"
-	mkdir library
+	LIBRARY="${PWD}/tmp/library"
+	mkdir $LIBRARY
 
 	cut -d "," -f 3 ${SAMPLESHEET} \
 		| tail -n +2 \
-		| xargs -I{} cp {} library/
+		| xargs -I{} cp {} $LIBRARY/
 	echo "Done"
 }
 
 build_db () {
 	echo "Linking taxonomy files"
-	mkdir taxonomy
+	mkdir tmp/taxonomy
 	find $TAXONOMY \
 		-maxdepth 1 \
 		\( \
@@ -25,18 +28,18 @@ build_db () {
 			-name "nodes.dmp" -o \
 			-name "names.dmp" \
 		\) \
-		-exec ln -s {} taxonomy/ \;
+		-exec ln -s {} tmp/taxonomy/ \;
 	echo "Done"
 
 	echo "Building metacache database"
-	mkdir -p metacache_db
-	cd metacache_db
+	mkdir -p results/metacache_db
+	cd results/metacache_db
 
 	metacache build \
 		metacache_db \
 		${LIBRARY} \
-		-taxonomy ../taxonomy/ \
-		-taxpostmap ../taxonomy/*.accession2taxid
+		-taxonomy ../../taxonomy/ \
+		-taxpostmap ../../taxonomy/*.accession2taxid
 	echo "Done"
 	cd ..
 }

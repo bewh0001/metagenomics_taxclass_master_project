@@ -6,8 +6,10 @@ SAMPLESHEET="${HERE}/../inputs/samplesheet.csv"
 VIRAL_GENOMES="${HERE}/../inputs/sylph_viral_genomes.txt"
 
 build_db () {
-	mkdir sylph_db
-	cd sylph_db
+	cd ${HERE}/../../
+
+	mkdir results/sylph_db
+	cd results/sylph_db
 
 	echo "Building Sylph database"
 	cut -d "," -f 3 ${SAMPLESHEET} \

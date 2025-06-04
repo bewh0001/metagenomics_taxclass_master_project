@@ -6,7 +6,9 @@ SAMPLESHEET="${HERE}/../inputs/samplesheet.csv"
 
 build_db () {
 echo "Building DIAMOND protein library from samplesheet $SAMPLESHEET"
-	LIBRARY="$(pwd)/library.faa"
+	cd ${HERE}/../../
+	mkdir tmp
+	LIBRARY="$(pwd)/tmp/library.faa"
 
 	# Merge input FASTAs
 	cut -d "," -f 4 $SAMPLESHEET \
@@ -23,17 +25,17 @@ echo "Building DIAMOND protein library from samplesheet $SAMPLESHEET"
 	echo "Done"
 
 	echo "Building DIAMOND database"
-	mkdir -p diamond_db
-	cd diamond_db
+	mkdir -p results/diamond_db
+	cd results/diamond_db
 
 	diamond makedb \
 		--in ${LIBRARY} \
-		--db "diamond-db" \
+		--db "results/diamond_db" \
 		--taxonmap ${TAXONOMY}/prot.accession2taxid.FULL \
 		--taxonnodes ${TAXONOMY}/nodes.dmp \
 		--taxonnames ${TAXONOMY}/names.dmp \
 		--threads 16
-	cd ..
+	cd ../../
 
 	echo "Cleaning up temporary files"
 		rm ${LIBRARY}
